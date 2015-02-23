@@ -54,7 +54,7 @@ functionality to be moved from the MCU to a separate controller.
 ![](img/plan_1.png)
 
 We will work out a solution where the options handling will allow development of
-functionality, independent of the main firmware, in a more modular fashion. This 
+functionality, independ of the main firmware, in a more modular fasion. This 
 will allow parameter based configuration without the need of rewriting code. It
 is important that all existing options is handled properly. This will imply 
 a reduction in time needed to develop new features.
@@ -68,7 +68,7 @@ secure in a way that ensures that no unauthorized may tamper with it.
 The long term goal is to incorporate the possibility to customize into  the 
 standard software. There is no significant market value in the options 
 handling it self, but in the long term there will be. Both in time savings as 
-well as in product quality. This will give The company Products a better foundation to
+well as in product quality. This will give BT Products a better foundation to
 decide on the possibility to include this in the control units of the trucks.
 
 ##Methods
@@ -95,7 +95,7 @@ handle them.
 Further, one possible delimitation might be to hand off the MCU side of the
 development to The company. This option, however, depends on how much time 
 The company can spare.
-This delimitation is only applicable if we decide to put the options handling in
+This delimiation is only applicable if we decide to put the options handling in
 an external chip. In this case, all of the options currently existing shall be
 implemented.
 
@@ -139,7 +139,7 @@ Finish the model. It might change if we detect flaws.
 Develop a prototype.
 
 ###Week 7
-Milestone: In front of a _larger_ crowd demonstrate our prototype so far.
+Milestone: In front of a _larger_ crowd demonstrade our prototype so far.
 
 ###Week 8 to 9
 Continue with the prototype.

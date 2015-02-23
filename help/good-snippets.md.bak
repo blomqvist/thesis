@@ -10,11 +10,11 @@ header-includes:
 #How to build the project (a md-file)
 Just run 
     
-    md2pdf <file name> [-spell] 
+    md2pdf <filename> [-spell] 
     # the -spell flag is optional, but enforces spell check
 
 
-#Useful snippets
+#Usefull snippets
 
 Create several newlines (blank):
 
