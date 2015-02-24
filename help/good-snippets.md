@@ -25,6 +25,37 @@ Insert image:
     !["Image text"](path/to/img.png, "Alternative text")
 
 
+Write a snippet of code with color coding:
+
+*This:*
+
+    ```c
+    #include <stdio.h>
+    
+    int main(int argc, char** argv)
+    {
+        char world[5] = "world";
+        printf("Hello %s", world);
+        
+        return 0;
+    }
+    ```
+
+
+*Becomes:*
+
+
+```c
+#include <stdio.h>
+
+int main(int argc, char** argv)
+{
+    char world[5] = "world";
+    printf("Hello %s", world);
+    
+    return 0;
+}
+```
 
 # Documentation on markdown and pandoc
 http://johnmacfarlane.net/pandoc/demo/example9/pandocs-markdown.html
