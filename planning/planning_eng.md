@@ -17,6 +17,8 @@ header-includes:
 | 1.0     | 2015-02-17 | Robin, Niklas | First revision                        |
 | 1.1     | 2015-02-23 | Robin, Niklas | Spelling. Replaced company name with  |
 |         |            |               | "The company"                         |
+| 1.2     | 2015-02-26 | Robin, Niklas | Expanded documentation                |
+|         |            |               |                                       |
 
 
 \newpage
@@ -30,7 +32,7 @@ Robin Gustafsson, CS
 ##Preliminary title
 Options handling
 
-##Forewords
+##Preamble
 We will conduct our thesis at a big fork lift manufacturer located in 
 Östergötland. They have asked us not to mention them by name in text. We will
 therefore call them "The company".
@@ -107,11 +109,12 @@ system and/or with a truck.
 
 ##Existing documentation
 
- - Data sheet of the CAN-bus protocol
- - http://www.ti.com/lit/an/sloa101a/sloa101a.pdf
- - Literature on model based development
+ - Company data sheet of the CAN-bus protocol
+ - Existing system model
+ - Existing system software
+ - Publications about modelbased development
+ - Publications about CAN-protocol API modification 
 
-This list will be updated during week one.
 
 \newpage
 

@@ -26,42 +26,42 @@ header-includes:
 
 
 #Abstract
-Customizations of the functionality (options) are often requested by the
-customer and have to be acknowledged in the manufacturing process of fork lifts.
-When new options have to be created or present option algorithms have to be modified in
-the main software the complexity increases, the firmware revision pool gets
-large and with the increasing code size the memory limit is threatened.
-This affects the software development since the frequent modification of the
-option handler is very resource consuming. Therefore it is desireable to have a
-very modular system for the option handler to simplify the development process.
-Although the market value of this improvement is neglecteble the possible long
-term savings is the desireble effect. The purpose of this thesis is to explore
-the posibility of migrating the option handling software to a separate hardware
-module to help the development process by effectivly increasing the modilarity
-of the system architecture aswell as exploring new methods for
-model based development.
+Unique customizations (options) of a fork lifts master controll unit and software 
+functionality are often requested by the customer. This have to be acknowledged 
+in the manufacturing process of fork lifts. When new options have to be created 
+or present option algorithms have to be modified in the main software the 
+complexity increases, the firmware revision pool gets large and with the 
+increasing code size the memory limit is threatened. This affects the software 
+development since the frequent modification of the option handler software is 
+very resource consuming. Therefore it is desireable to have a highly modular 
+system for the option handler to reduce the development process. Although the 
+market value of this improvement is neglecteble the possible long term savings 
+is the desireble effect. The purpose of this thesis is to explore the posibility
+of migrating the option handling software to a dedicated hardware module. 
+This will help the development process by increasing the modilarity
+of the system architecture and thus reducing the development scope. Methods 
+for modelbased development will be utilized to explore ways to efficently speed 
+up the software development process. The terms of inclusion and the 
+tools to accomplish this option handler is analyzed. A system model of the 
+resulting approach will be designed and a prototype will be developed to 
+validate the result.
+
+218 ord. för mkt?
 
 _(fyll på mer om uppnått resultat efter projektet)_
 
-_\/ DETTA KANSKE SKA HAMNA UNDER METOD? \/_
-
-The terms of inclusion and the tools to accomplish this
-option handler is analyzed. A system model of the resulting approach will be
-designed and a prototype will be developed to validate the result.
-
-_"En sammanfattning (abstract) ska kort och koncist beskriva och motivera det studerade_
-_problemet, metoden samt resultat och slutsatser. Arbetets bidrag till_
-_huvudområdet ska tydligt framgå. Vad är det rapporten säger om huvudområdet_
-_som vi inte visste tidigare? Exempel på bidrag kan vara vilken effekt en_
-_specifik algoritm eller programutvecklingsmetod får i en specifik tillämpning._
-_Normalt ska en sammanfattning vara högst 150 ord, och inte innehålla några_
-_referenser eller radbrytningar."_
-
+#Tribute
+Får inte nämna att arbetet utförs på BT men
+kanske får möjligheten att nämna Micke och Patrick och Unmesh instats åtminstonde.
+om hemligstämpling inte är något problem där.
 
 #Introduction
 We have conducted our thesis work at a big fork lift manufacturer located in
 Östergötland. We have been asked not to call it by name in text. In this report
-it will be called "The company".
+it will be called "The company". In this section we will present the motivation
+behind this project aswell as the purpose. The initial problems for the project
+will be specified and the delimitations needed to be able complete the project 
+within the scope.
 
 ##Motivation
 A large quantity of the sold fork lifts is equipped with non-standard options
@@ -161,31 +161,58 @@ would give the user a good overview of active options and also the possibility
 to customize parameters. It is also important that the options handling is 
 secure in a way that ensures that no unauthorized person may tamper with it.
 
-The long term goal is to incorporate the possibility to customize into  the 
-standard software. There is no significant market value in the options 
+The long term goal is to incorporate the possibility to customize into the 
+standard software. Currently there is no significant market value in the options 
 handling it self, but in the long term there will be. Both in time savings as 
 well as in product quality. This will give The company Products a better 
 foundation to decide on the possibility to include this in the control units of 
 the trucks.
-
-_Ibland bygger ett examensarbete på ett specifikt uppdrag_
-_vilket kan göra det svårt att ge hela sammanhanget i_
-_inledningskapitlet utan att det blir för långrandigt_
-_(inledningen ska ju väcka läsarens intresse). Då kan ett_
-_bakgrundskapitel användas för att ge en mer detaljerad_
-_beskrivning av själva uppdraget. Det kan till exempel_
-_handla om någon form av kravspecifikation eller dylikt._
-_Detta kapitel ska enbart användas vid behov._
 
 #Related work
 We will discuss work done, mostly by The company, as well as related academic 
 work.
 
 ## Existing work
+enligt Referens 1
 
 
+In this big project scope we decided to utilize model based development to our advantage 
+in the hope of beeing able to implement as much of the desired functionality as
+possible and document the project well. Model based development alows for
+the project to bee fractioned to smaller tasks and thus aids the prototyping process
+and simplifies high level software development. It also greatly simplifies the 
+planing and project flow wich leeds to more efficent resource management, wich
+is the goal of our use of model based development. The overal software quality
+is strenghten when following a model and this help us reach the high quality 
+standard of the software developed by the company.
 
+The model based development approach also helps motivation within the project since the 
+development from idea or model to finished prototype is the main goal. The
+model can be done relativly early in the project which help to start the project
+compared to cold turkey style development.
 
+Another advantage to the model based development is that the model is universal 
+to all platforms and programming languages so in our case when developing 
+sub-prototypes we can develop it in C++ and then later convert it easily to C 
+for the final prototype. 
+
+enligt Referens 2
+
+By adding another hardware unit to the existing modular hardware architecture 
+we reuse the present CAN-protocol available within the standard system.
+The major modification is to the embedded CAN module where the API had to be 
+modified to bee able to execute the new instructions needed when the option 
+handler were migrated to another external hardware-unit on the other side of 
+the CAN-bus. All the core functionality to every system operation are avaiable 
+on the MCU and would bee unnecessar to migrate so the only CAN-bus traffic 
+needed for the model to operate is call to operation instruction algorithms and 
+modification of data parameters. The Option handler is interrupt driven in the 
+sense of a trigger event sparking an internal interrupt imediatly followed by 
+the corresponding Instruction. The validity of the instruction is controlled on 
+the MCU side and otherwise a error package is returned on the CAN-bus.  
+
+Kommunikation efektivitets relaterat arbete
+interface embedded system.
 
 #Method
 
@@ -193,13 +220,15 @@ work.
 ##Feasibility Study
 Currently, The company has an options handling where a 
 trigger^[Button pressed, speed under/above, etc.] or override^[Service key is 
-used, reduce drive speed, etc.] is used. **FIND OUT HOW IT IS IMPLEMENTED**
+used, reduce drive speed, etc.] is used. 
+
+Currently, these triggers and overrides are checked by functions called
+from the main loop. This is not ideal considering that a firmware update needs 
+to cascade to all of the branches of the firmware that might exist.
+
+**FIND OUT HOW IT IS IMPLEMENTED**
 
 **It is implemented through...*
-
-Analys över hur det ser ut nu. inkl kod & teori bakom lösningen
-
-Modell baserat utvecklingsrelaterat arbete
 
 The company desires to explore new ways of model based development and relating
 tools. Designing the system model will require us to think ahead and make the 
@@ -216,12 +245,9 @@ our system to this in a similar format as an expansion.
 (förklara möjliga vektyg för att ta fram modellerna)
 
 Projektet kommer ha ett antal milstolpar iform av mindre delprototyper för att 
-itterativt validera resultatet. tex: 
+iterativt validera resultatet. tex: 
 
-milstolpe 1
-Huvud loop färdig.
-Grundläggande funktionalitet klar.
-inte uppkoppla
+
 
 ###Complete system model
 
@@ -246,8 +272,8 @@ struct option
 
 
 
-dataobjekten lagras intärnt i optionshanteraren i lämplig datastruktur. 
-typ stack. Fördelen är att det är lätt att modifiera aspekter på objekten och det är 
+Dataobjekten lagras internt i optionshanteraren i lämplig datastruktur. 
+Fördelen är att det är lätt att modifiera aspekter på objekten och det är 
 superlätt att lägga till nya optioner (expandera).
 
 
