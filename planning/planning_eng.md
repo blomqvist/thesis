@@ -50,7 +50,7 @@ on their fork lifts. The options are all being built in into the main controller
  * The available code memory will soon be filled. Adding additional code will 
    require a larger on chip memory.
 
-The company is looking for an options handling solution which allows the 
+The company is looking for an options handling solution that allows the 
 functionality to be moved from the MCU to a separate controller.
 
 ![](img/plan_1.png)
@@ -61,11 +61,11 @@ will allow parameter based configuration without the need of rewriting code. It
 is important that all existing options is handled properly. This will imply 
 a reduction in time needed to develop new features.
 
-A graphical interface is desired in order to simplify the administration of 
-options without the need of deep programming knowledge. A _PLC representation_
-would give the user a good overview of active options and also the possibility
-to customize parameters. It is also important that the options handling is 
-secure in a way that ensures that no unauthorized may tamper with it.
+A graphical interface is desired to simplify the administration of options 
+without the need of deep programming knowledge. A _PLC representation_ would 
+give the user a good overview of active options and also the possibility to 
+customize parameters. It is also important that the options handling is secure 
+in a way that ensures that no unauthorized can tamper with it.
 
 The long term goal is to incorporate the possibility to customize into  the 
 standard software. There is no significant market value in the options 
@@ -75,14 +75,14 @@ decide on the possibility to include this in the control units of the trucks.
 
 ##Methods
 Together with our mentor at The company, we will go through the existing documentation
-and software in order to invent a new model. We need to conduct a detailed 
-analysis of how the current options are handled. We will also investigate the 
-system architecture, especially the CAN protocol. When all the requirements and
-and details has been worked out, we may start the development of a prototype.
-This work will be documented thoroughly.
+and software to invent a new model. We need to conduct a detailed analysis of 
+how the current options are handled. We will also investigate the architecture, 
+especially the CAN protocol. When all the requirements and details has been
+worked out, we may start the development of a prototype. This work will be 
+documented thoroughly.
 
 ##Delimitations
-The time will not be sufficient to develop a full scale version of the options
+The time will not be enough to develop a full scale version of the options
 handling. With respect to that, we have chosen to spend most of the time 
 developing a working architecture, and a prototype. The prototype will be
 written with flexibility in mind. This meaning it will be written in such way
@@ -90,18 +90,16 @@ that it should be easy to extend it with new features such as a graphical
 interface. From a testing perspective, this is the natural way to go.
 
 The fundamental part of this thesis is the development of an architecture 
-as general as possible. It is therefore not vital that we implement all the 
-existing options, as long as the architecture can be deemed good enough to 
-handle them.
+as general as possible. It is therefore not important that we implement all the 
+existing options, if the architecture can be deemed good enough to handle them.
 
 Further, one possible delimitation might be to hand off the MCU side of the
 development to The company. This option, however, depends on how much time 
 The company can spare.
 This delimitation is only applicable if we decide to put the options handling in
-an external chip. In this case, all of the options currently existing shall be
-implemented.
+an external chip. In this case, all of the options existing shall be implemented.
 
-The communication between the MCU and the indented extra unit will occur over
+The communication between the MCU and the intented extra unit will occur over
 the CAN bus. This means that the protocol must be implemented in the prototype.
 The results will be validated with the help of a HIL (Hardware In the Loop) 
 system and/or with a truck.
@@ -112,7 +110,7 @@ system and/or with a truck.
  - Company data sheet of the CAN-bus protocol
  - Existing system model
  - Existing system software
- - Publications about modelbased development
+ - Publications about model based development
  - Publications about CAN-protocol API modification 
 
 
@@ -151,7 +149,7 @@ Continue with the prototype.
 The prototype should now be finished and ready for a final demonstration.
 
 ###Week 10
-Presentation the people on The company where we talk about what we have done and what
-we have learned.
+Presentation to the people at The company where we talk about what we have done 
+and what we have learned.
 
 

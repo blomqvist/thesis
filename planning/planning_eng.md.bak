@@ -17,6 +17,8 @@ header-includes:
 | 1.0     | 2015-02-17 | Robin, Niklas | First revision                        |
 | 1.1     | 2015-02-23 | Robin, Niklas | Spelling. Replaced company name with  |
 |         |            |               | "The company"                         |
+| 1.2     | 2015-02-26 | Robin, Niklas | Expanded documentation                |
+|         |            |               |                                       |
 
 
 \newpage
@@ -30,7 +32,7 @@ Robin Gustafsson, CS
 ##Preliminary title
 Options handling
 
-##Forewords
+##Preamble
 We will conduct our thesis at a big fork lift manufacturer located in 
 Östergötland. They have asked us not to mention them by name in text. We will
 therefore call them "The company".
@@ -54,7 +56,7 @@ functionality to be moved from the MCU to a separate controller.
 ![](img/plan_1.png)
 
 We will work out a solution where the options handling will allow development of
-functionality, independ of the main firmware, in a more modular fasion. This 
+functionality, independent of the main firmware, in a more modular fashion. This 
 will allow parameter based configuration without the need of rewriting code. It
 is important that all existing options is handled properly. This will imply 
 a reduction in time needed to develop new features.
@@ -68,7 +70,7 @@ secure in a way that ensures that no unauthorized may tamper with it.
 The long term goal is to incorporate the possibility to customize into  the 
 standard software. There is no significant market value in the options 
 handling it self, but in the long term there will be. Both in time savings as 
-well as in product quality. This will give BT Products a better foundation to
+well as in product quality. This will give The company Products a better foundation to
 decide on the possibility to include this in the control units of the trucks.
 
 ##Methods
@@ -95,7 +97,7 @@ handle them.
 Further, one possible delimitation might be to hand off the MCU side of the
 development to The company. This option, however, depends on how much time 
 The company can spare.
-This delimiation is only applicable if we decide to put the options handling in
+This delimitation is only applicable if we decide to put the options handling in
 an external chip. In this case, all of the options currently existing shall be
 implemented.
 
@@ -107,11 +109,12 @@ system and/or with a truck.
 
 ##Existing documentation
 
- - Data sheet of the CAN-bus protocol
- - http://www.ti.com/lit/an/sloa101a/sloa101a.pdf
- - Literature on model based development
+ - Company data sheet of the CAN-bus protocol
+ - Existing system model
+ - Existing system software
+ - Publications about modelbased development
+ - Publications about CAN-protocol API modification 
 
-This list will be updated during week one.
 
 \newpage
 
@@ -139,7 +142,7 @@ Finish the model. It might change if we detect flaws.
 Develop a prototype.
 
 ###Week 7
-Milestone: In front of a _larger_ crowd demonstrade our prototype so far.
+Milestone: In front of a _larger_ crowd demonstrate our prototype so far.
 
 ###Week 8 to 9
 Continue with the prototype.

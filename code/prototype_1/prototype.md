@@ -16,7 +16,8 @@ header-includes:
 | Förkortning | Betydelse                                                       |
 |-------------|-----------------------------------------------------------------|
 | MCU         | Huvudstyrenhet                                                  |
-| Spider      | Extern (från MCU) enhet där optionshantering ska implementeras  |
+| OCU         | Extern (från MCU) enhet där optionshantering ska implementeras. |
+|             | Options Controller Unit                                         |
 
 
 \newpage
@@ -24,11 +25,11 @@ header-includes:
 
 #State machine
 
-##Spider
-Funktionaliteten från `optionfunc.c` flyttas mer eller mindre komplett till nya 
-enheten. När Trigger Event[^1] sker ska hela optionsloopen utföra alla optionsunika 
-instruktioner. Ändringen kommer då automatiskt appliceras på rätt sätt när 
-processerna körs. 
+##OCU
+Funktionaliteten från `optionfunc.c` flyttas mer eller mindre komplett till nya
+enheten. När Trigger Event[^1] sker ska hela optionsloopen utföra alla optionsunika
+instruktioner. Ändringen kommer då automatiskt appliceras på rätt sätt när
+processerna körs.
 
 ![](img/state2.png)
 
@@ -39,29 +40,60 @@ processerna körs.
 
 #Utgångspunkt
 Vi utgår från att parametrar så som hastighet, batterispänning, etc hela tiden
-kommuniceras över CAN-bus. Spider lyssnar på CAN-bussen och läser det som är
+kommuniceras över CAN-bus. OCU lyssnar på CAN-bussen och läser det som är
 relevant för optioner.
 
 Parametrar uppdateras en gång var 20:e ms. Detta innebär också att det endast är
 meningsfullt att köra optionsloopen en gång per 20 ms.
 
 MCU kommer i sin huvudloop att lyssna på parameterändringar och funktionsanrop
-från Spidern.
+från OCUn.
+
+#Olika typer av Optioner
+Varje option kommer vara definerad i en C-fil för att bygga upp en hierarki över
+aktiva optioner. På så sätt kan man vid tillägg av en ny option med hjälp av 
+script generera C-kod.
+
+##Automatiskt generera körklara optioner
+Målet med OCUn är att man enkelt och snabbt ska kunna skräddarsy egna optioner
+efter önskemål. Om ett grafiskt användargränssnitt ska kunna appliceras på systemet
+så behöver optionerna brytas ned i detalj. Ett förslag på hur det kan ske:
+
+###Aktiverande option
+En funktion kan aktiveras per iteration.
+
+|Iteration|System     |Argument 1 |Argument 2 |Argument 3 |Argument 4 | 
+|---------|-----------|-----------|-----------|-----------|-----------|
+|1        |Drive      |Direction  |Speed      |Ramp       |           |
+|2        |Hydraulics |Function   |Direction  |Speed      |Ramp       |
+
+###Begränsande option
+Flera begränsningar kan skickas per iteration.
+
+|Iteration|System     |Argument 1 |Argument 2 |Argument 3 |Argument 4 | 
+|---------|-----------|-----------|-----------|-----------|-----------|
+|1        |Drive      |Direction  |Speed      |Ramp       |           |
+|1        |Hydraulics |Function   |Direction  |Speed      |Ramp       |
+
+##Manuellt skapa optioner
+Vid mer avancerade optionslösningar kan man het enkelt skapa en C-fil med önskad
+algoritm. Tex som vid `void autoLiftLower()` där optionshantering är lite mer 
+komplex.
 
 #Metodförslag
 Internlagring av optioner planeras ske objektorienterat för att uppnå en organiserad
-struktur. Objektorienteringen underlättar även vid vidareutveckling eftersom 
+struktur. Objektorienteringen underlättar även vid vidareutveckling eftersom
 nya objektmedlemmar lätt kan läggas till och objektstrukturen då kan utökas.
 
 Förslag på `Options`-objekt, som kommer finnas representerad
-i en `array` på Spiderenheten:
+i en `array` på OCUenheten:
 
 ```c
 typedef struct {
     bool (*run)(void); // Function pointer to the option logic
     bool changed;      // Tells the system that the run function have changed
                        // some data
-    
+
     // More if needed
 } Option;
 ```
@@ -85,10 +117,9 @@ void loop()
 }
 ```
 
-I funktionen `(*opt->run)()` finns logiken för varje option lagrad.
-`CAN_data` är ett lokalt register (på Spider-enheten) som innehåller senaste
-värdena som skickats över CAN-bussen. `run` utgår från dessa när den räknar
-på optionsvillkoren.
+I funktionen `(*opt->run)()` finns logiken för varje option lagrad. `CAN_data`
+är ett lokalt register (på OCU-enheten) som innehåller senaste värdena som
+skickats över CAN-bussen. `run` utgår från dessa när den räknar på optionsvillkoren.
 
 Exempel på hur en `run`-funktion kan se ut:
 
@@ -109,8 +140,8 @@ void run(void)
 }
 ```
 
-`CAN.setParam()` håller reda på vilka attribut som har ändrats och skickar 
-därför endast parametrar som faktiskt har justerats. Detta genom att 
+`CAN.setParam()` håller reda på vilka attribut som har ändrats och skickar
+därför endast parametrar som faktiskt har justerats. Detta genom att
 `CAN.setParam()` endast populerar en lista med ändrade parametrar.
 
 Detta innebär att program-loopen kommer bli något liknande:
@@ -125,7 +156,7 @@ void loop()
     {
         opt = optionsArray[i];
         opt.changed = false;
-        
+
         // Option is a function pointer
         opt.changed = (*opt->run)();
     }
@@ -157,6 +188,8 @@ värde krockar med något annat `enum`-namns värde.
 
 Denna data måste kunna skickas effektivt över CAN-bussen - absolut på <= 8 bytes.
 
+
+
 Förslag på en möjlig `struct`:
 ```c
 struct OptionPacket {
@@ -182,7 +215,7 @@ struct OptionPacket {
 ```
 
 ##Hantering av detta på MCU
-Hantering av inkommande funktionsanrop from Spider.
+Hantering av inkommande funktionsanrop from OCU.
 
 Vi reder ut vilket system vi försöker nå:
 ```c
@@ -226,11 +259,11 @@ void handle_system1(struct OptionPacket& optionRequest) {
 
 ###Specialhanteringen av parametermodifiering
 Parametrar kommer behöva lite specialbehandling, och i sin tur också delas in
-i system. Detta eftesom det finns fler parametrerar än vad en `UByte` kan 
-representera. Dessa delas in enligt _Jura309 Jura Firmware Configuration.xls_ 
+i system. Detta eftesom det finns fler parametrerar än vad en `UByte` kan
+representera. Dessa delas in enligt _Jura309 Jura Firmware Configuration.xls_
 ```c
 SWord parDriver(struct OptionPacket& optionRequest) {
-    return setPar(optionRequest.function + offset, // Index + offset to 
+    return setPar(optionRequest.function + offset, // Index + offset to
                                                    // compensate max(UByte) = 255
                   optionRequest.module,            // ParameterType
                   optionRequest.value);            // ParameterValue
@@ -243,17 +276,47 @@ Returnerar `PARAM_UNDEFINED` om parametermodiferingen är ogiltig.
 Frågor som har dykt upp.
 
  - Vilka saker ska kunna justeras av en option? (parametermodifiering, aktivera in-/utgångar)
- - Verktyg för state machine (verktyg för att rita bild)
- - Kan MCU skicka _trigger events_ till optionshanteraren (Spider) tex vid knapptryckning?
+   Parametrar är fasta. döp om till signal ex: maxhastighet.
+   Displayvisning.
+   Återanvända mycket data på bussen
+
+    CAN object dictionary
+
+ - Kan MCU skicka _trigger events_ till optionshanteraren (OCU) tex vid knapptryckning?
    Vad händer vid tex hastighetsinducerande trigger events?
+    Nej
+
+
  - Om inte ovan, får 60 ms[^2] fördröjning (maximal) antas, är detta OK?
    Finns det tidskritiska funktioner? (< 60 ms)
- - SDO eller PDO CAN?
+    räkna med att ignorera. men använd i rapport
+
+- SDO eller PDO CAN?
+    PDO
+
  - `xtra.c` rutiner för att extrahera information från CAN-bussen; återanvända men utöka eller göra ny?
- - Göra en testbänk för CAN-bussen
- - Varför finns det 2 SEU?
- - ACT, ICH - vad står förkortningarna för?
+    se object dictionary
+
+
+- Göra en testbänk för CAN-bussen
+    återkommer
+
+
+- ACT, ICH - vad står förkortningarna för?
+    Altarate current Traction
+
+    Intercorrected control handle
+
+
+#NyaFrågor
+
+ - Hur påverkas tex 
+
 
 [^2]: En omgång data kan precis ha skickats när en knapp tryck ned. Det tar då
       ~20 ms för nästa omgång data att skickas, och sedan 20 ms innan svar från
-      Spider anländer. Totalt ~60 ms (worst case).
+      OCU anländer. Totalt ~60 ms (worst case).
+
+
+
+be oskar hjälpa med analyzer
