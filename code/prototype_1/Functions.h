@@ -3,6 +3,8 @@
 
 #include "OCU.h"
 
-bool RunPrintName(struct Option opt);
+uint8_t SPEED;
+
+void RunPrintName();
 
 #endif
