@@ -13,7 +13,7 @@
 | 2015-02-04 | Möte med examinator 10.15. Dag på Liu                           | X        |
 | 2015-02-05 | Göra om Optionsarray till pekare                                |          |
 | 2015-02-06 |                                                                 |          |
-| 2015-02-09 |                                                                 |          |
+| 2015-02-09 | Kravspec & modell                                               |          |
 | 2015-02-10 |                                                                 |          |
 
 

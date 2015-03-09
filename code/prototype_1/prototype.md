@@ -303,20 +303,15 @@ Frågor som har dykt upp.
 
 
 - ACT, ICH - vad står förkortningarna för?
-    Altarate current Traction
+    Alternative current Traction
 
-    Intercorrected control handle
-
-
-#NyaFrågor
-
- - Hur påverkas tex 
+    Interconnected control handle
 
 
 [^2]: En omgång data kan precis ha skickats när en knapp tryck ned. Det tar då
       ~20 ms för nästa omgång data att skickas, och sedan 20 ms innan svar från
       OCU anländer. Totalt ~60 ms (worst case).
 
+canalyzer
 
-
-be oskar hjälpa med analyzer
+problem: gå via master?

@@ -3,8 +3,7 @@
 
 #include "OCU.h"
 
-uint8_t SPEED;
-
 void RunPrintName();
+void latchedSpidIn2IncSpeed(UByte, UByte, UByte, UByte, UByte);
 
 #endif

@@ -21,14 +21,14 @@ void delegateFunctionCall(OptionPacket* call)
 		return;
 	}
 
-	switch (call->system)
+	switch (call->sys)
 	{
 	case SIG_MODIFICATION:
-		printf("Setting a signal\n");
+		printf("MCU: Setting a signal\n");
 		printFunctionCall(call);
 	break;
 	case TRACTION:
-		printf("Calling a traction function\n");
+		printf("MCU: Calling a traction function\n");
 		printFunctionCall(call);
 	break;
 	}
@@ -38,13 +38,16 @@ void delegateFunctionCall(OptionPacket* call)
 
 void printFunctionCall(OptionPacket* call)
 {
-	printf("function: %c\n", call->function);
-	printf("module:   %c\n", call->module);
-
-	if (call->type != tUndefined)
+	if (call->changed == FALSE)
 	{
-		printf("value:    %c\n", call->value.u);
+		return;
 	}
+	
+	call->changed = FALSE;
+	printf("%s", "MCU received following function call:\n");
+	printf("function:  %X (%d)\n", call->function, call->function);
+	printf("module:    %X (%d)\n", call->module,   call->module);
+	printf("value:     %X (%d)\n", call->value,    call->value);
 
 	printf("\n");
 }

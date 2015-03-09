@@ -8,8 +8,8 @@
 #ifndef MCU_OPEN_INTERFACE_H_
 #define MCU_OPEN_INTERFACE_H_
 
-#include "common_headers/common_data_structures.h"
-#include "common_headers/systems.h"
+#include "../common_headers/common_data_structures.h"
+#include "../common_headers/pc_typedefs.h"
 
 void delegateFunctionCall(OptionPacket*);
 
