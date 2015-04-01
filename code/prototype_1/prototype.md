@@ -60,7 +60,7 @@ efter önskemål. Om ett grafiskt användargränssnitt ska kunna appliceras på 
 så behöver optionerna brytas ned i detalj. Ett förslag på hur det kan ske:
 
 ###Aktiverande option
-En funktion kan aktiveras per iteration.
+En funktion kan aktiveras per iteration och option.
 
 |Iteration|System     |Argument 1 |Argument 2 |Argument 3 |Argument 4 | 
 |---------|-----------|-----------|-----------|-----------|-----------|
@@ -68,7 +68,7 @@ En funktion kan aktiveras per iteration.
 |2        |Hydraulics |Function   |Direction  |Speed      |Ramp       |
 
 ###Begränsande option
-Flera begränsningar kan skickas per iteration.
+Flera begränsningar kan skickas per iteration och option.
 
 |Iteration|System     |Argument 1 |Argument 2 |Argument 3 |Argument 4 | 
 |---------|-----------|-----------|-----------|-----------|-----------|
@@ -312,6 +312,5 @@ Frågor som har dykt upp.
       ~20 ms för nästa omgång data att skickas, och sedan 20 ms innan svar från
       OCU anländer. Totalt ~60 ms (worst case).
 
-canalyzer
-
-problem: gå via master?
+ - vad är anledningen att varje option har 4 argument? kan det inte hanteras
+    internt i funktionen istället.
