@@ -120,7 +120,7 @@ void loop()
 }
 ```
 
-In the function, `(*run)()`, the conditions for every option is specified.
+In the function, `run()`, the conditions for every option is specified.
 The option uses signals stored globally in the `signal_array` to calculate the
 conditions. The `signal_array` is updated frequently by the MCU at the event of
 a change in the signal values. At the event of a modification of any sort when
@@ -137,14 +137,8 @@ void runOptions(void)
 
     UByte OptionFunction;
     for (OptionFunction = 0; OptionFunction < NUMBER_OF_OPTIONS; OptionFunction++) {
-
         if (OptionArray[OptionFunction].run != 0) {
-            (*((ptr)OptionArray[OptionFunction].run))
-            (OptionArray[OptionFunction].arg[0],
-                    OptionArray[OptionFunction].arg[1],
-                    OptionArray[OptionFunction].arg[2],
-                    OptionArray[OptionFunction].arg[3],
-                    OptionFunction );
+            OptionArray[OptionFunction].run();
         }
     }
 }
