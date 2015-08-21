@@ -37,6 +37,7 @@ header-includes:
 |---------|------------|---------------|-------------------------------------|
 | 0.1     | 2015-06-18 | Robin, Niklas | First draft                         |
 | 0.2     | 2015-07-13 | Robin, Niklas | Second draft                        |
+| 1.0     | 2015-08-21 | Robin, Niklas | First edition                       |
 
 
 
@@ -131,9 +132,6 @@ The Data Length Code (DLC) tells the receiving end how many bytes of data to exp
 
 \newpage
 
-<!-- Nytt stycke -->
-#
-
 ###2.2.1 Communication function codes
 In the CANopen protocol each CAN frame is mapped to a certain function code. The first four bits of the COB-ID represents the function code so that critical frames are automatically given higher priority. Multiple function codes are used; Network Management (NMT), Service Data Object (SDO), Process Data Object (PDO) and Emergency Object (EMCY). The more important objects are given a lower function code value and thus are prioritized during communication. In addition to the function code priority, the rest of the COB-ID is used to prioritize among the individual frames within the same function code.
 
@@ -153,7 +151,18 @@ Our implementation builds fully on this function code.
 
 **EMCY:** A device can send an error message on internal fatal error. They are sent with high priority which makes them usable as interrupts if the receive routine is adapted. Our implementation does not currently use this function code.
 
-###2.2.2 Worst case CAN latency
+<!-- 
+At present allow fixed number of identifier with some packing strategy 
+ - why is this done?
+ - how it was done
+ - how to add more signals
+-->
+###2.2.2 Signal Handling
+We label the data required to be sent over the CAN bus as signals. Each of these signals may take up one or more bytes. These signals are placed in a CAN frame (PDO) which may contain up to eight signals, each being one byte long. If the signals are longer than one byte, the frame will contain less than eight signals.
+
+The firmware on the ICH and OCU is configured to have a 20 ms long application cycle. All frames that are transmitted over the CAN bus are queued to be sent once each application cycle. During these 20 ms, a CAN frame can be sent each 1 ms or 1.25 ms depending on host device (OCU and ICH respectively), this because of their respective CPU interrupt timers.
+
+###2.2.3 Worst case CAN latency
 The PDOs are sent with a 20 ms interval making the worst case round-trip 60 ms. As demonstrated in _figure 2_, if two nodes are suffering from latency, a PDO frame can be transmitted from node 1 late in the communication time window (0 ms to 19 ms). Node 2 will receive the frame and transmit the answer frame during the second time window (20 ms to 39 ms). The final answer might arrive late to node 1 at the last time window (40 ms to 59 ms) giving the absolute worst case delay (round-trip time) of 60 ms for the handshake. This is because different PDOs can have different priority, depending on the receive address. If the CAN bus becomes temporary congested due to previous transmit error or other reason, the PDO queue of each unit tries to re-send. When this happens, packet latency will occur. Packet latency occurs continuously when two units tries to send data at the same time and this latency is often negligible as it normally only lags behind for a couple of milliseconds.
 
 ![Illustration of worst case PDO latency](Images/can_20_ms.png)
@@ -177,7 +186,7 @@ Second, the embedded software design had to be studied in order to establish the
 Before implementing the option control unit (OCU^[OCU: The name of our new external option handler, Option Control Unit]) prototype we designed a complete system model including details about hardware aspects, approximate software flow and CAN interface.
 
 ###3.1.1 Current system
-The Company has an options handler where the options runs tightly coupled in the main loop. The options are setup with a parameter table, one row with multiple columns per option. This table has to be modified for each truck as some parameters differs between different truck models. 
+The Company has an options handler where the options run tightly coupled in the main loop. The options are setup with a parameter table, one row with multiple columns per option. This table has to be modified for each truck as some parameters differs between different truck models. 
 
 This makes it _dangerous_ and non-trivial to implement new options as a bug in one option might cause the truck to fail. The truck does implement fail detection in the kernel, and there is also a watchdog^[Hardware timer which restarts the system if the timer has not been restarted] which triggers if the code stops responding. However, the code in the unit responsible of controlling the truck should ideally be modified as little as possible. Having all of the options integrated in the main firmware makes it harder to test the functionality.
 
@@ -191,7 +200,7 @@ Theoretically since the functionality available inside the ICH has to be accesse
 
 The main challenge of the project was to find the correct balance and identifying the vital parts for the option handler to operate outside the ICH. The CAN communication we had to add came with the risk of flooding the bus. This is not desired since the overall response of the system would decrease. We only considered adding traffic if it was absolute necessary. The signals already present at the CAN-bus was prioritized and utilized to the full extent. These signals could simply be sniffed by _listeners_^[Software modules that listens to a specific unit on the CAN bus] without adding traffic to the bus. 
 
-The kernel of the ICH ticks^[Generates interrupt in which kernel and application functions are called] each 1.25 ms. In the MCU2B, the kernel ticks once each 1.0 ms. In both cases the main application loop, including communication instancing, is called once each 20 ms. If the loop is not finished in that time, the truck will stop.
+The kernel of the ICH ticks^[Generates interrupt in which kernel and application functions are called] every 1.25 ms. In the MCU2B, the kernel ticks once each 1.0 ms. In both cases the main application loop, including communication instancing, is called once each 20 ms. If the loop is not finished in that time, the truck will stop.
 
 This is roughly how the interrupt routine for the kernel works. The code is simplified to reflect the gist.
 
@@ -250,7 +259,7 @@ uint8_t example_data = get_CanAct(0)->Data[0];
 ```
 
 **PDORx1:**
-The PDORx1 is the most important PDO the ICH transmits to the OCU. This data object gives the OCU the information that is none existing on the CAN bus.
+The PDORx1 is the most important PDO message that the ICH transmits to the OCU. This message gives the OCU the information that is internal to the ICH and non-existing on the CAN bus.
 
 <!-- PDORx1 table -->
 \begin{table}[H]
@@ -319,7 +328,7 @@ In _table 5_ the bits for all the buttons are displayed. Among the core buttons,
 
 Set bit indicates a button being pressed. Depending on implementation, a button can act as a switch which toggles on or off, or active high. Multiple buttons might be active at any time.
 
-**PDOTx1:** _Table 8_ displays the object which can control most of the ICH. Functionality can be requested or restricted. Also, combinations can be sent. 
+**PDOTx1:** As discussed earlier in section 3.1.2, the OCU control the ICH node. _Table 8_ displays the PDO of operations which the OCU can control most of the ICH with. Functionality can be requested or restricted. Also, combinations of operations can be sent. 
 
 \begin{table}[H]
 \centering
@@ -410,7 +419,7 @@ Request power is not required on any of our prototypes. Due to wiring and other 
 \caption{Display and LED data}
 \end{table}
 
-\footnotetext{\label{dispnote}Display 1 is the leftmost digit. When set to 0, ICH controls the display.}
+\footnotetext{\label{dispnote} Display 1 is the leftmost digit. When set to 0, ICH controls the display.}
 \addtocounter{footnote}{1}
 
 The process data object in _table 12_ is only used to control the display and it's surrounding LEDs. If the first byte is set to 0, the display will be handled by the ICH. The first four bytes are actual ascii values of the four digits on the display. The fifth byte is the bitfield for activating the led-indicators. In _table 13_ the indicator choice is displayed. 
@@ -433,7 +442,7 @@ The process data object in _table 12_ is only used to control the display and it
  
 
 ##3.2 Implementation of prototype
-The system model gave way for the iterative implementation process of the prototype. The implementation started with very simple sub-prototypes mostly aimed towards testing our understanding of the CAN-bus. 
+Once we fixed the system model, we continued with an iterative implementation process of the prototype. The implementation started with very simple sub-prototypes mostly aimed towards testing our understanding of the CAN-bus. 
 
 We were introduced to the MCU2B^[The hardware we used as the external option handler for the prototype] hardware which was perfect for the purpose of representing the external OCU. Together with the MCU2B we would have the standard ICH hardware to represent the original system. These hardware modules would link together using a CAN-bus harness. Additional hardware needed to establish the prototype included a 24 volt power supply and two CPC-USB^[EMS CPC-USB: Hardware for read/write to the CAN-bus (2)]; one for debugging of the CAN-bus and one for firmware download.
 
